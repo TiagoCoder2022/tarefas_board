@@ -4,17 +4,20 @@ import com.example.board_tarefas.persistence.dao.BoardColumnDAO;
 import com.example.board_tarefas.persistence.dao.BoardDAO;
 import com.example.board_tarefas.persistence.entity.BoardColumnEntity;
 import com.example.board_tarefas.persistence.entity.BoardEntity;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
-@AllArgsConstructor
 public class BoardService {
 
     private final BoardDAO boardDAO;
     private final BoardColumnDAO boardColumnDAO;
+
+    public BoardService(BoardDAO boardDAO, BoardColumnDAO boardColumnDAO) {
+        this.boardDAO = boardDAO;
+        this.boardColumnDAO = boardColumnDAO;
+    }
 
     @Transactional
     public BoardEntity create(BoardEntity board) {
