@@ -1,7 +1,6 @@
 package com.example.board_tarefas.persistence.dao;
 
 import com.example.board_tarefas.persistence.entity.BoardEntity;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -23,14 +22,11 @@ public class BoardDAO {
             (rs, rowNum) -> new BoardEntity(
                     rs.getLong("id"),
                     rs.getString("name"),
-                    new ArrayList<>()
+                    null
             );
 
     public BoardEntity insert(BoardEntity entity) {
-        String sql = """
-                INSERT INTO boards (name)
-                VALUES (?)
-                """;
+        String sql = "INSERT INTO boards (name) VALUES (?)";
 
         var keyHolder = new GeneratedKeyHolder();
 
@@ -40,9 +36,8 @@ public class BoardDAO {
             return ps;
         }, keyHolder);
 
-        Long generatedId = keyHolder.getKey().longValue();
-
-        return new BoardEntity(generatedId, entity.getName(), new ArrayList<>());
+        entity.setId(keyHolder.getKey().longValue());
+        return entity;
     }
 
     public boolean delete(Long id) {
@@ -51,15 +46,10 @@ public class BoardDAO {
     }
 
     public Optional<BoardEntity> findById(Long id) {
-        String sql = "SELECT * FROM boards WHERE id = ?";
-
-        try {
-            return Optional.ofNullable(
-                    jdbcTemplate.queryForObject(sql, BOARD_ROW_MAPPER, id)
-            );
-        } catch (EmptyResultDataAccessException ex) {
-            return Optional.empty();
-        }
+        String sql = "SELECT id, name FROM boards WHERE id = ?";
+        return jdbcTemplate.query(sql, BOARD_ROW_MAPPER, id)
+                .stream()
+                .findFirst();
     }
 
     public boolean exists(Long id) {
