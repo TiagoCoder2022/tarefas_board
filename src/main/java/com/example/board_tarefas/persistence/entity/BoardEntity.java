@@ -3,6 +3,7 @@ package com.example.board_tarefas.persistence.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -10,6 +11,7 @@ import java.util.List;
 public class BoardEntity {
     private Long id;
     private String name;
+    @ToString.Exclude
     private List<BoardColumnEntity> boardsColumns;
 
     public BoardEntity() {
