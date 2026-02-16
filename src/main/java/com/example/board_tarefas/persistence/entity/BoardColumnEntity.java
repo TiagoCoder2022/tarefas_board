@@ -67,4 +67,12 @@ public class BoardColumnEntity {
     public void setBoard(BoardEntity board) {
         this.board = board;
     }
+
+    public List<CardEntity> getCards() {
+        return cards;
+    }
+
+    public void setCards(List<CardEntity> cards) {
+        this.cards = cards;
+    }
 }
