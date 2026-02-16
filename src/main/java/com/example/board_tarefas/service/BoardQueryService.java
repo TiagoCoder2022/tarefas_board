@@ -1,5 +1,6 @@
 package com.example.board_tarefas.service;
 
+import com.example.board_tarefas.dto.BoardDetailsDTO;
 import com.example.board_tarefas.persistence.dao.BoardColumnDAO;
 import com.example.board_tarefas.persistence.dao.BoardDAO;
 import com.example.board_tarefas.persistence.entity.BoardEntity;
@@ -27,5 +28,16 @@ public class BoardQueryService {
                     );
                     return board;
                 });
+    }
+
+    public Optional<BoardDetailsDTO> showBoardDetails(Long id) {
+        var optional = boardDAO.findById(id);
+        if (optional.isPresent()) {
+            var entity = optional.get();
+            var columns = boardColumnDAO.findByBoardIdWithDetails(entity.getId());
+            var dto = new BoardDetailsDTO(entity.getId(), entity.getName(), columns);
+            return Optional.of(dto);
+        }
+        return Optional.empty();
     }
 }
