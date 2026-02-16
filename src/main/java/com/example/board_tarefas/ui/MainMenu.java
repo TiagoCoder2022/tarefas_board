@@ -3,9 +3,7 @@ package com.example.board_tarefas.ui;
 import com.example.board_tarefas.persistence.entity.BoardColumnEntity;
 import com.example.board_tarefas.persistence.entity.BoardColumnKindEnum;
 import com.example.board_tarefas.persistence.entity.BoardEntity;
-import com.example.board_tarefas.service.BoardColumnQueryService;
-import com.example.board_tarefas.service.BoardQueryService;
-import com.example.board_tarefas.service.BoardService;
+import com.example.board_tarefas.service.*;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -18,14 +16,20 @@ public class MainMenu {
     private final BoardService boardService;
     private final BoardQueryService boardQueryService;
     private final BoardColumnQueryService boardColumnQueryService;
+    private final CardQueryService cardQueryService;
+    private final CardService cardService;
     private final Scanner scanner = new Scanner(System.in);
 
     public MainMenu(BoardService boardService,
                     BoardQueryService boardQueryService,
-                    BoardColumnQueryService boardColumnQueryService) {
+                    BoardColumnQueryService boardColumnQueryService,
+                    CardQueryService cardQueryService,
+                    CardService cardService) {
         this.boardService = boardService;
         this.boardQueryService = boardQueryService;
         this.boardColumnQueryService = boardColumnQueryService;
+        this.cardQueryService = cardQueryService;
+        this.cardService = cardService;
     }
 
     public void execute() {
@@ -91,7 +95,7 @@ public class MainMenu {
         var id = scanner.nextLong();
         var optional = boardQueryService.findById(id);
         optional.ifPresentOrElse(
-                b -> new BoardMenu(b, boardQueryService, boardColumnQueryService).execute(),
+                b -> new BoardMenu(b, boardQueryService, boardColumnQueryService, cardQueryService, cardService).execute(),
                 () -> System.out.printf("Não foi possível encontrar um board com id %s\n", id)
         );
     }
