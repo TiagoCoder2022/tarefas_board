@@ -1,5 +1,11 @@
 package com.example.board_tarefas.persistence.entity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 public class BoardColumnEntity {
     private Long id;
@@ -7,6 +13,9 @@ public class BoardColumnEntity {
     private int columnOrder;
     private BoardColumnKindEnum kind;
     private BoardEntity board;
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<CardEntity> cards = new ArrayList<>();
 
     public BoardColumnEntity() {
     }
