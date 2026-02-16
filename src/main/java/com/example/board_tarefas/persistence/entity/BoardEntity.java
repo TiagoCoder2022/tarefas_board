@@ -2,7 +2,10 @@ package com.example.board_tarefas.persistence.entity;
 
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.board_tarefas.persistence.entity.BoardColumnKindEnum.INITIAL;
 
 @Data
 public class BoardEntity {
@@ -10,7 +13,7 @@ public class BoardEntity {
     private String name;
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private List<BoardColumnEntity> boardsColumns;
+    private List<BoardColumnEntity> boardsColumns = new ArrayList<>();
 
     public BoardEntity() {
     }
@@ -19,6 +22,13 @@ public class BoardEntity {
         this.id = id;
         this.name = name;
         this.boardsColumns = boardsColumns;
+    }
+
+    public BoardColumnEntity getInitialColumn() {
+        return boardsColumns.stream()
+                .filter(bc -> bc.getKind().equals(INITIAL))
+                .findFirst().orElseThrow();
+
     }
 
     public void setId(Long id) {
