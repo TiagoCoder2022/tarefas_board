@@ -2,7 +2,6 @@ package com.example.board_tarefas.persistence.dao;
 
 import com.example.board_tarefas.dto.CardDetailsDTO;
 import com.example.board_tarefas.persistence.entity.CardEntity;
-import com.mysql.cj.jdbc.StatementImpl;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
@@ -43,6 +42,17 @@ public class CardDAO {
         return entity;
     }
 
+    public void moveToColumn(Long columnId, Long cardId) {
+        var sql = "UPDATE cards SET board_column_id = ? WHERE id = ?";
+
+        jdbcTemplate.update(connection -> {
+            var preparedStatements = connection.prepareStatement(sql);
+            preparedStatements.setLong(1, columnId);
+            preparedStatements.setLong(2, cardId);
+            return preparedStatements;
+        });
+    }
+
     public Optional<CardDetailsDTO> findById(Long id) {
         var sql = """
             SELECT c.id,
@@ -52,13 +62,13 @@ public class CardDAO {
                    b.block_reason,
                    c.board_column_id,
                    bc.name,
-                   (SELECT COUNT(sub_b.id) 
+                   (SELECT COUNT(*) 
                     FROM blocks sub_b 
-                    WHERE sub_b.card_id = c.id) AS blocks_amount
+                    WHERE sub_b.cards_id = c.id) AS blocks_amount
             FROM cards c
             LEFT JOIN blocks b
-                ON c.id = b.card_id
-                AND b.unblocked_at IS NULL
+                ON c.id = b.cards_id
+                AND b.unbloked_at IS NULL
             INNER JOIN boards_columns bc
                 ON bc.id = c.board_column_id
             WHERE c.id = ?;
