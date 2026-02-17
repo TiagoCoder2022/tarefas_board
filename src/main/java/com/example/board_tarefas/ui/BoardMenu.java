@@ -71,14 +71,17 @@ public class BoardMenu {
     }
 
     private void createCard() {
-        var card = new CardEntity();
-        System.out.println("Informe o título do card");
-        card.setTitle(scanner.next());
-        System.out.println("Informe a descricao do card");
-        card.setDescription(scanner.next());
+        exceptionHandler.execute(() -> {
+            var card = new CardEntity();
+            System.out.println("Informe o título do card");
+            card.setTitle(scanner.next());
+            System.out.println("Informe a descricao do card");
+            card.setDescription(scanner.next());
 
-        card.setBoardColumn(boardEntity.getInitialColumn());
-        cardService.insert(card);
+            card.setBoardColumn(boardEntity.getInitialColumn());
+            cardService.insert(card);
+            System.out.println("Card criado com sucesso!");
+        });
     }
 
     private void moveCardToNextColumn() {
