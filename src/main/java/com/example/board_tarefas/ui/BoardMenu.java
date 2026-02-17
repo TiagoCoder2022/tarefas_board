@@ -111,6 +111,14 @@ public class BoardMenu {
     }
 
     private void unblockCard() {
+        exceptionHandler.execute(() -> {
+            System.out.println("Informe o id do card que será desbloqueado");
+            var cardId = scanner.nextLong();
+            System.out.println("Informe o motivo do desbloqueio do card");
+            var reason = scanner.next();
+            cardService.unblock(cardId, reason);
+            System.out.println("Card desbloqueado com sucesso!");
+        });
     }
 
     private void cancelCard() {
