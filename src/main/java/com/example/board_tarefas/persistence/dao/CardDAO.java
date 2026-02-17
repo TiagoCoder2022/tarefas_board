@@ -68,7 +68,7 @@ public class CardDAO {
             FROM cards c
             LEFT JOIN blocks b
                 ON c.id = b.cards_id
-                AND b.unbloked_at IS NULL
+                AND b.unblocked_at IS NULL
             INNER JOIN boards_columns bc
                 ON bc.id = c.board_column_id
             WHERE c.id = ?;
