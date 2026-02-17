@@ -114,13 +114,16 @@ public class BoardMenu {
     }
 
     private void cancelCard() {
-        System.out.println("Informe o id do card que deseja mover para a coluna de cancelamento");
-        var cardId = scanner.nextLong();
-        var cancelColumn = boardEntity.getCancelColumn();
-        var boardColumnsInfo = boardEntity.getBoardsColumns().stream()
-                .map(bc -> new BoardColumnInfoDTO(bc.getId(), bc.getColumnOrder(), bc.getKind()))
-                .toList();
-        cardService.cancel(cardId, cancelColumn.getId(), boardColumnsInfo);
+        exceptionHandler.execute(() -> {
+            System.out.println("Informe o id do card que deseja mover para a coluna de cancelamento");
+            var cardId = scanner.nextLong();
+            var cancelColumn = boardEntity.getCancelColumn();
+            var boardColumnsInfo = boardEntity.getBoardsColumns().stream()
+                    .map(bc -> new BoardColumnInfoDTO(bc.getId(), bc.getColumnOrder(), bc.getKind()))
+                    .toList();
+            cardService.cancel(cardId, cancelColumn.getId(), boardColumnsInfo);
+            System.out.println("Card cancelado com sucesso!");
+        });
     }
 
     private void showBoard() {
