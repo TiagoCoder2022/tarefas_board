@@ -31,7 +31,7 @@ public class CardService {
     public void moveToNextColumn(Long cardId, List<BoardColumnInfoDTO> boardColumnsInfo) {
         var optional = cardDAO.findById(cardId);
         var dto = optional.orElseThrow(
-                () -> new EntityNotFoundException("O card ded id %s nao foi encontrado".formatted(cardId))
+                () -> new EntityNotFoundException("O card de id %s nao foi encontrado".formatted(cardId))
         );
         if (dto.blocked()) {
             var message = "O card %s está bloqueado, é necessário desbloquear-lo para movelo".formatted(cardId);
@@ -54,7 +54,7 @@ public class CardService {
     public void cancel(Long cardId, Long cancelColumnId, List<BoardColumnInfoDTO> boardColumnsInfo) {
         var optional = cardDAO.findById(cardId);
         var dto = optional.orElseThrow(
-                () -> new EntityNotFoundException("O card ded id %s nao foi encontrado".formatted(cardId))
+                () -> new EntityNotFoundException("O card de id %s nao foi encontrado".formatted(cardId))
         );
         if (dto.blocked()) {
             var message = "O card %s está bloqueado, é necessário desbloquear-lo para movelo".formatted(cardId);
@@ -76,7 +76,7 @@ public class CardService {
     public void block(Long id, String reason, List<BoardColumnInfoDTO> boardColumnInfo) {
         var optional = cardDAO.findById(id);
         var dto = optional.orElseThrow(
-                () -> new EntityNotFoundException("O card ded id %s nao foi encontrado".formatted(id))
+                () -> new EntityNotFoundException("O card de id %s nao foi encontrado".formatted(id))
         );
         if (dto.blocked()) {
             var message = "O card %s já está bloqueado".formatted(id);
@@ -91,5 +91,17 @@ public class CardService {
             throw new IllegalStateException(message);
         }
         blockDAO.block(reason, id);
+    }
+
+    public void unblock(Long id, String reason) {
+        var optional = cardDAO.findById(id);
+        var dto = optional.orElseThrow(
+                () -> new EntityNotFoundException("O card de id %s nao foi encontrado".formatted(id))
+        );
+        if (!dto.blocked()) {
+            var message = "O card %s não está bloqueado".formatted(id);
+            throw new CardBlockedException(message);
+        }
+        blockDAO.unblock(reason, id);
     }
 }
