@@ -82,12 +82,15 @@ public class BoardMenu {
     }
 
     private void moveCardToNextColumn() {
-        System.out.println("Informe o id do card que deseja mover para a próxima coluna");
-        var cardId = scanner.nextLong();
-        var boardColumnsInfo = boardEntity.getBoardsColumns().stream()
-                .map(bc -> new BoardColumnInfoDTO(bc.getId(), bc.getColumnOrder(), bc.getKind()))
-                .toList();
-        cardService.moveToNextColumn(cardId, boardColumnsInfo);
+        exceptionHandler.execute(() -> {
+            System.out.println("Informe o id do card que deseja mover para a próxima coluna");
+            var cardId = scanner.nextLong();
+            var boardColumnsInfo = boardEntity.getBoardsColumns().stream()
+                    .map(bc -> new BoardColumnInfoDTO(bc.getId(), bc.getColumnOrder(), bc.getKind()))
+                    .toList();
+            cardService.moveToNextColumn(cardId, boardColumnsInfo);
+            System.out.println("Card movido com sucesso!");
+        });
     }
 
     private void blockCard() {
