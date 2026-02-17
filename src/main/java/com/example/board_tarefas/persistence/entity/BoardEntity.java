@@ -4,7 +4,9 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
+import static com.example.board_tarefas.persistence.entity.BoardColumnKindEnum.CANCELED;
 import static com.example.board_tarefas.persistence.entity.BoardColumnKindEnum.INITIAL;
 
 @Data
@@ -25,10 +27,17 @@ public class BoardEntity {
     }
 
     public BoardColumnEntity getInitialColumn() {
-        return boardsColumns.stream()
-                .filter(bc -> bc.getKind().equals(INITIAL))
-                .findFirst().orElseThrow();
+        return getFilteredColumn(bc -> bc.getKind().equals(INITIAL));
+    }
 
+    public BoardColumnEntity getCancelColumn() {
+        return getFilteredColumn(bc -> bc.getKind().equals(CANCELED));
+    }
+
+    private BoardColumnEntity getFilteredColumn(Predicate<BoardColumnEntity> filter) {
+        return boardsColumns.stream()
+                .filter(filter)
+                .findFirst().orElseThrow();
     }
 
     public void setId(Long id) {
