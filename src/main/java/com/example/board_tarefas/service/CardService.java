@@ -4,6 +4,7 @@ import com.example.board_tarefas.dto.BoardColumnInfoDTO;
 import com.example.board_tarefas.exception.CardBlockedException;
 import com.example.board_tarefas.exception.CardFinishedException;
 import com.example.board_tarefas.exception.EntityNotFoundException;
+import com.example.board_tarefas.persistence.dao.BlockDAO;
 import com.example.board_tarefas.persistence.dao.CardDAO;
 import com.example.board_tarefas.persistence.entity.CardEntity;
 import org.springframework.stereotype.Service;
@@ -16,9 +17,11 @@ import static com.example.board_tarefas.persistence.entity.BoardColumnKindEnum.F
 @Service
 public class CardService {
     private final CardDAO cardDAO;
+    private final BlockDAO blockDAO;
 
-    public CardService(CardDAO cardDAO) {
+    public CardService(CardDAO cardDAO, BlockDAO blockDAO) {
         this.cardDAO = cardDAO;
+        this.blockDAO = blockDAO;
     }
 
     public CardEntity insert(CardEntity entity) {
@@ -80,12 +83,13 @@ public class CardService {
             throw new CardBlockedException(message);
         }
         var currentColumn = boardColumnInfo.stream()
-                .filter(bc -> bc.id().equals(id))
+                .filter(bc -> bc.id().equals(dto.columnId()))
                 .findFirst()
                 .orElseThrow();
         if (currentColumn.kind().equals(FINAL) || currentColumn.kind().equals(CANCELED)) {
             var message = "O card está em uma coluna do tipo %s e nao pode ser bloqueado".formatted(currentColumn.kind());
             throw new IllegalStateException(message);
         }
+        blockDAO.block(reason, id);
     }
 }
