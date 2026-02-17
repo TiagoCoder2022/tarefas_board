@@ -1,6 +1,7 @@
 package com.example.board_tarefas.ui;
 
 import com.example.board_tarefas.dto.BoardColumnInfoDTO;
+import com.example.board_tarefas.exception.MenuExceptionHandler;
 import com.example.board_tarefas.persistence.entity.BoardColumnEntity;
 import com.example.board_tarefas.persistence.entity.BoardEntity;
 import com.example.board_tarefas.persistence.entity.CardEntity;
@@ -19,19 +20,22 @@ public class BoardMenu {
     private final BoardColumnQueryService boardColumnQueryService;
     private final CardQueryService cardQueryService;
     private final CardService cardService;
+    private final MenuExceptionHandler exceptionHandler;
 
     public BoardMenu(
             BoardEntity boardEntity,
             BoardQueryService boardQueryService,
             BoardColumnQueryService boardColumnQueryService,
             CardQueryService cardQueryService,
-            CardService cardService
+            CardService cardService,
+            MenuExceptionHandler exceptionHandler
     ) {
         this.boardEntity = boardEntity;
         this.boardQueryService = boardQueryService;
         this.boardColumnQueryService = boardColumnQueryService;
         this.cardQueryService = cardQueryService;
         this.cardService = cardService;
+        this.exceptionHandler = exceptionHandler;
     }
     public void execute() {
         System.out.printf("Bem vindo ao board %s, slecione a operaçao desejada\n", boardEntity.getId());
@@ -87,10 +91,17 @@ public class BoardMenu {
     }
 
     private void blockCard() {
-        System.out.println("Informe o id do card que será bloqueado");
-        var cardId = scanner.nextLong();
-        System.out.println("Informe o motivo do bloqueio do card");
-        var reason = scanner.next();
+        exceptionHandler.execute(() -> {
+            System.out.println("Informe o id do card que será bloqueado");
+            var cardId = scanner.nextLong();
+            System.out.println("Informe o motivo do bloqueio do card");
+            var reason = scanner.next();
+            var boardColumnsInfo = boardEntity.getBoardsColumns().stream()
+                    .map(bc -> new BoardColumnInfoDTO(bc.getId(), bc.getColumnOrder(), bc.getKind()))
+                    .toList();
+            cardService.block(cardId, reason, boardColumnsInfo);
+            System.out.println("Card bloqueado com sucesso!");
+        });
     }
 
     private void unblockCard() {
