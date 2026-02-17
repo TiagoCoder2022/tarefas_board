@@ -26,4 +26,23 @@ public class BlockDAO {
             return ps;
         });
     }
+
+    public void unblock(String reason, Long cardId) {
+        var sql = """
+            UPDATE blocks 
+            SET unblocked_at = ?, 
+                unblock_reason = ? 
+            WHERE cards_id = ?
+            AND unblocked_at IS NULL;
+            """;
+
+        jdbcTemplate.update(con -> {
+            var ps = con.prepareStatement(sql);
+            ps.setTimestamp(1, toTimestamp(OffsetDateTime.now()));
+            ps.setString(2, reason);
+            ps.setLong(3, cardId);
+
+            return ps;
+        });
+    }
 }
