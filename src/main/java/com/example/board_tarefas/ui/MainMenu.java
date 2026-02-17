@@ -1,5 +1,6 @@
 package com.example.board_tarefas.ui;
 
+import com.example.board_tarefas.exception.MenuExceptionHandler;
 import com.example.board_tarefas.persistence.entity.BoardColumnEntity;
 import com.example.board_tarefas.persistence.entity.BoardColumnKindEnum;
 import com.example.board_tarefas.persistence.entity.BoardEntity;
@@ -18,18 +19,22 @@ public class MainMenu {
     private final BoardColumnQueryService boardColumnQueryService;
     private final CardQueryService cardQueryService;
     private final CardService cardService;
+    private final MenuExceptionHandler exceptionHandler;
     private final Scanner scanner = new Scanner(System.in);
 
     public MainMenu(BoardService boardService,
                     BoardQueryService boardQueryService,
                     BoardColumnQueryService boardColumnQueryService,
                     CardQueryService cardQueryService,
-                    CardService cardService) {
+                    CardService cardService,
+                    MenuExceptionHandler exceptionHandler
+    ) {
         this.boardService = boardService;
         this.boardQueryService = boardQueryService;
         this.boardColumnQueryService = boardColumnQueryService;
         this.cardQueryService = cardQueryService;
         this.cardService = cardService;
+        this.exceptionHandler = exceptionHandler;
     }
 
     public void execute() {
@@ -95,7 +100,7 @@ public class MainMenu {
         var id = scanner.nextLong();
         var optional = boardQueryService.findById(id);
         optional.ifPresentOrElse(
-                b -> new BoardMenu(b, boardQueryService, boardColumnQueryService, cardQueryService, cardService).execute(),
+                b -> new BoardMenu(b, boardQueryService, boardColumnQueryService, cardQueryService, cardService, exceptionHandler).execute(),
                 () -> System.out.printf("Não foi possível encontrar um board com id %s\n", id)
         );
     }
